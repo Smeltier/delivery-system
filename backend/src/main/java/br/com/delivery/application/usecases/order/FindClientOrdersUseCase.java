@@ -9,7 +9,9 @@ import br.com.delivery.domain.repositories.IClientRepository;
 import br.com.delivery.domain.repositories.IOrderRepository;
 import br.com.delivery.application.dto.order.FindClientOrdersInput;
 import br.com.delivery.application.dto.order.FindClientOrdersOutput;
+import br.com.delivery.application.dto.order.OrderOutput;
 import br.com.delivery.application.exceptions.ClientNotFoundException;
+import br.com.delivery.application.mappers.OrderMapper;
 
 public class FindClientOrdersUseCase {
     private final IClientRepository clientRepository;
@@ -31,6 +33,10 @@ public class FindClientOrdersUseCase {
 
         List<Order> orders = orderRepository.findAllByClientId(accountId);
 
-        return new FindClientOrdersOutput(orders);
+        List<OrderOutput> ordersOutput = orders.stream()
+                .map(OrderMapper::toOutput)
+                .toList();
+
+        return new FindClientOrdersOutput(ordersOutput);
     }
 }
