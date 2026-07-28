@@ -12,25 +12,25 @@ import br.com.delivery.application.dto.order.FindClientOrdersOutput;
 import br.com.delivery.application.exceptions.ClientNotFoundException;
 
 public class FindClientOrdersUseCase {
-  private final IClientRepository clientRepository;
-  private final IOrderRepository orderRepository;
+    private final IClientRepository clientRepository;
+    private final IOrderRepository orderRepository;
 
-  public FindClientOrdersUseCase(IOrderRepository orderRepository, IClientRepository clientRepository) {
-    this.orderRepository = Objects.requireNonNull(orderRepository);
-    this.clientRepository = Objects.requireNonNull(clientRepository);
-  }
-
-  public FindClientOrdersOutput execute(FindClientOrdersInput input) {
-    input = Objects.requireNonNull(input);
-
-    AccountId accountId = input.accountId();
-    boolean existis = clientRepository.existsById(accountId);
-    if (!existis) {
-      throw new ClientNotFoundException("Cliente não encontrado.");
+    public FindClientOrdersUseCase(IOrderRepository orderRepository, IClientRepository clientRepository) {
+        this.orderRepository = Objects.requireNonNull(orderRepository);
+        this.clientRepository = Objects.requireNonNull(clientRepository);
     }
 
-    List<Order> orders = orderRepository.findAllByClientId(accountId);
+    public FindClientOrdersOutput execute(FindClientOrdersInput input) {
+        input = Objects.requireNonNull(input);
 
-    return new FindClientOrdersOutput(orders);
-  }
+        AccountId accountId = input.accountId();
+        boolean existis = clientRepository.existsById(accountId);
+        if (!existis) {
+            throw new ClientNotFoundException("Cliente não encontrado.");
+        }
+
+        List<Order> orders = orderRepository.findAllByClientId(accountId);
+
+        return new FindClientOrdersOutput(orders);
+    }
 }
