@@ -24,8 +24,8 @@ public class FindClientOrdersUseCase {
         input = Objects.requireNonNull(input);
 
         AccountId accountId = input.accountId();
-        boolean existis = clientRepository.existsById(accountId);
-        if (!existis) {
+        boolean exists = clientRepository.existsById(accountId);
+        if (!exists) {
             throw new ClientNotFoundException("Cliente não encontrado.");
         }
 
