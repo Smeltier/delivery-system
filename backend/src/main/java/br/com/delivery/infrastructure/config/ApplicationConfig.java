@@ -7,6 +7,7 @@ import br.com.delivery.application.usecases.order.AddItemToOrderUseCase;
 import br.com.delivery.application.usecases.order.CancelOrderUseCase;
 import br.com.delivery.application.usecases.order.DecreaseItemQuantityFromOrderUseCase;
 import br.com.delivery.application.usecases.order.RemoveItemFromOrderUseCase;
+import br.com.delivery.application.usecases.order.FindClientOrdersUseCase;
 import br.com.delivery.domain.repositories.IAccountRepository;
 import br.com.delivery.domain.repositories.IClientRepository;
 import br.com.delivery.domain.repositories.IOrderRepository;
@@ -67,5 +68,10 @@ public class ApplicationConfig {
     @Bean
     public DecreaseItemQuantityFromOrderUseCase decreaseItemQuantityFromOrderUseCase(IOrderRepository orderRepository) {
         return new DecreaseItemQuantityFromOrderUseCase(orderRepository);
+    }
+
+    @Bean
+    public FindClientOrdersUseCase findClientOrdersUseCase(IClientRepository clientRepository, IOrderRepository orderRepository) {
+        return new FindClientOrdersUseCase(orderRepository, clientRepository);
     }
 }
