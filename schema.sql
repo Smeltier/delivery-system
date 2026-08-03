@@ -118,8 +118,14 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE TABLE IF NOT EXISTS payments (
     id UUID PRIMARY KEY,
     order_id UUID NOT NULL REFERENCES orders(id),
-    total_amount NUMERIC(10, 2),
-    total_currency VARCHAR(3),
+    total_amount NUMERIC(10, 2) NOT NULL,
+    total_currency VARCHAR(3) NOT NULL,
     status payment_status NOT NULL DEFAULT 'PENDING'
+);
+
+CREATE TABLE IF NOT EXISTS order_payments (
+    order_id UUID NOT NULL REFERENCES orders(id),
+    payment_id UUID NOT NULL REFERENCES payments(id),
+    PRIMARY KEY (order_id, payment_id)
 );
 
