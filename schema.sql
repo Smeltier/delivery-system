@@ -1,5 +1,5 @@
 DO $$ BEGIN
-    CREATE TYPE account_role AS ENUM ('CLIENT', 'RESTAURANT_OWNER');
+    CREATE TYPE account_role AS ENUM ('BASE_CLIENT', 'RESTAURANT_OWNER');
 EXCEPTION
     WHEN duplicate_object THEN NULL;
 END $$;
