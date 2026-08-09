@@ -13,10 +13,8 @@ import br.com.delivery.domain.repositories.IClientRepository;
 import br.com.delivery.domain.repositories.IOrderRepository;
 import br.com.delivery.domain.repositories.IRestaurantOwnerRepository;
 import br.com.delivery.domain.repositories.IRestaurantRepository;
-import br.com.delivery.infrastructure.persistence.memory.InMemoryAccountRepository;
 import br.com.delivery.infrastructure.persistence.memory.InMemoryRestaurantRepository;
 import br.com.delivery.infrastructure.persistence.memory.InMemoryOrderRepository;
-import br.com.delivery.infrastructure.persistence.memory.InMemoryClientRepository;
 import br.com.delivery.infrastructure.persistence.memory.InMemoryRestaurantOwnerRepository;
 
 @Configuration
@@ -34,11 +32,6 @@ public class ApplicationConfig {
     @Bean
     public IRestaurantOwnerRepository restaurantOwnerRepository() {
         return new InMemoryRestaurantOwnerRepository();
-    }
-
-    @Bean
-    public IClientRepository clientRepository() {
-        return new InMemoryClientRepository();
     }
 
     @Bean
