@@ -1,4 +1,4 @@
-package br.com.delivery.infrastructure.persistence;
+package br.com.delivery.infrastructure.persistence.jdbc;
 
 import java.util.List;
 import java.sql.ResultSet;
