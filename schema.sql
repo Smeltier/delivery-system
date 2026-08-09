@@ -1,4 +1,3 @@
-
 DO $$ BEGIN
     CREATE TYPE account_role AS ENUM ('CLIENT', 'RESTAURANT_OWNER');
 EXCEPTION
@@ -39,12 +38,12 @@ CREATE TABLE IF NOT EXISTS addresses (
     zip_code VARCHAR(10) NOT NULL
 );
 
-
 CREATE TABLE IF NOT EXISTS accounts (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS accounts_roles (
@@ -73,7 +72,8 @@ CREATE TABLE IF NOT EXISTS restaurants (
     open_hour TIME NOT NULL,
     close_hour TIME NOT NULL,
     currency VARCHAR(3),
-    address_id UUID REFERENCES addresses(id)
+    address_id UUID REFERENCES addresses(id),
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS menu_items (
@@ -84,7 +84,8 @@ CREATE TABLE IF NOT EXISTS menu_items (
     category menu_item_category NOT NULL,
     unit_price_amount NUMERIC(10, 2) NOT NULL,
     unit_price_currency VARCHAR(3) NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -100,7 +101,8 @@ CREATE TABLE IF NOT EXISTS orders (
     paid_at TIMESTAMP,
     confirmed_at TIMESTAMP,
     delivered_at TIMESTAMP,
-    cancelled_at TIMESTAMP
+    cancelled_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
@@ -120,7 +122,8 @@ CREATE TABLE IF NOT EXISTS payments (
     order_id UUID NOT NULL REFERENCES orders(id),
     total_amount NUMERIC(10, 2) NOT NULL,
     total_currency VARCHAR(3) NOT NULL,
-    status payment_status NOT NULL DEFAULT 'PENDING'
+    status payment_status NOT NULL DEFAULT 'PENDING',
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS order_payments (
@@ -128,4 +131,43 @@ CREATE TABLE IF NOT EXISTS order_payments (
     payment_id UUID NOT NULL REFERENCES payments(id),
     PRIMARY KEY (order_id, payment_id)
 );
+
+CREATE INDEX idx_clients_address_id ON clients(address_id);
+CREATE INDEX idx_restaurants_owner_id ON restaurants(owner_id);
+CREATE INDEX idx_restaurants_address_id ON restaurants(address_id);
+CREATE INDEX idx_menu_items_restaurant_id ON menu_items(restaurant_id);
+CREATE INDEX idx_orders_client_id ON orders(client_id);
+CREATE INDEX idx_orders_restaurant_id ON orders(restaurant_id);
+CREATE INDEX idx_orders_delivery_address_id ON orders(delivery_address_id);
+CREATE INDEX idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX idx_order_items_menu_item_id ON order_items(menu_item_id);
+CREATE INDEX idx_payments_order_id ON payments(order_id);
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_accounts_updated_at
+BEFORE UPDATE ON accounts
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_restaurants_updated_at
+BEFORE UPDATE ON restaurants
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_menu_items_updated_at
+BEFORE UPDATE ON menu_items
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_orders_updated_at
+BEFORE UPDATE ON orders
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_payments_updated_at
+BEFORE UPDATE ON payments
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
