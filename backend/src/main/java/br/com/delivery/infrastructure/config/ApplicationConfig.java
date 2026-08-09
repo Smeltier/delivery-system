@@ -22,11 +22,6 @@ import br.com.delivery.infrastructure.persistence.memory.InMemoryRestaurantOwner
 @Configuration
 public class ApplicationConfig {
     @Bean
-    public IAccountRepository accountRepository() {
-        return new InMemoryAccountRepository();
-    }
-
-    @Bean
     public IRestaurantRepository restaurantRepository() {
         return new InMemoryRestaurantRepository();
     }
