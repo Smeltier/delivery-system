@@ -12,5 +12,20 @@ services:
     ports:
       - "5432:5432"
 
+  api:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: delivery_api
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+    ports:
+      - "8080:8080"
+
 volumes:
   pgdata:
