@@ -49,7 +49,8 @@ public class AccountJdbcRepository implements IAccountRepository {
                 SET name = EXCLUDED.name, email = EXCLUDED.email, active = EXCLUDED.active
                 """;
 
-        jdbcTemplate.update(upsertAccount,
+        jdbcTemplate.update(
+                upsertAccount,
                 account.getId().value(),
                 account.getName(),
                 account.getEmail().value(),
