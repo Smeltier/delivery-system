@@ -7,69 +7,69 @@ import br.com.delivery.domain.account.AccountId;
 import br.com.delivery.domain.exception.InvalidRestaurantOwnerException;
 
 public class RestaurantOwner {
-  private final AccountId id;
-  private String corporateName;
-  private Cnpj cnpj;
-  
-  private RestaurantOwner(AccountId id) {
-    this.id = Objects.requireNonNull(id);
-  }
+    private final AccountId id;
+    private String corporateName;
+    private Cnpj cnpj;
 
-  public static RestaurantOwner create(AccountId id) {
-    return new RestaurantOwner(id);
-  }
-
-  public static RestaurantOwner restore(AccountId id, Cnpj cnpj, String corporateName) {
-    RestaurantOwner owner = new RestaurantOwner(id);
-
-    if (cnpj != null) {
-      owner.updateCnpj(cnpj);
+    private RestaurantOwner(AccountId id) {
+        this.id = Objects.requireNonNull(id);
     }
 
-    if (corporateName != null) {
-      owner.updateCorporateName(corporateName);
+    public static RestaurantOwner create(AccountId id) {
+        return new RestaurantOwner(id);
     }
 
-    return owner;
-  }
+    public static RestaurantOwner restore(AccountId id, Cnpj cnpj, String corporateName) {
+        RestaurantOwner owner = new RestaurantOwner(id);
 
-  public void updateCnpj(Cnpj newCnpj) {
-    this.cnpj = Objects.requireNonNull(newCnpj);
-  }
+        if (cnpj != null) {
+            owner.updateCnpj(cnpj);
+        }
 
-  public void updateCorporateName(String newCorporateName) {
-    if (newCorporateName == null || newCorporateName.isBlank()) {
-      throw new InvalidRestaurantOwnerException("Novo nome corporativo inválido.");
+        if (corporateName != null) {
+            owner.updateCorporateName(corporateName);
+        }
+
+        return owner;
     }
-    this.corporateName = newCorporateName;
-  }
 
-  public AccountId getId() {
-    return id;
-  }
-
-  public Cnpj getCnpj() {
-    return cnpj;
-  }
-
-  public String getCorporateName() {
-    return corporateName;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
+    public void updateCnpj(Cnpj newCnpj) {
+        this.cnpj = Objects.requireNonNull(newCnpj);
     }
-    if (!(obj instanceof RestaurantOwner)) {
-      return false;
-    }
-    RestaurantOwner owner = (RestaurantOwner) obj;
-    return this.id.equals(owner.getId());
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(id);
-  }
+    public void updateCorporateName(String newCorporateName) {
+        if (newCorporateName == null || newCorporateName.isBlank()) {
+            throw new InvalidRestaurantOwnerException("Novo nome corporativo inválido.");
+        }
+        this.corporateName = newCorporateName;
+    }
+
+    public AccountId getId() {
+        return id;
+    }
+
+    public Cnpj getCnpj() {
+        return cnpj;
+    }
+
+    public String getCorporateName() {
+        return corporateName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof RestaurantOwner)) {
+            return false;
+        }
+        RestaurantOwner owner = (RestaurantOwner) obj;
+        return this.id.equals(owner.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
