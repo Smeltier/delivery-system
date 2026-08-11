@@ -46,7 +46,7 @@ public class ClientJdbcRepository implements IClientRepository {
     public boolean existsById(AccountId id) {
         String sql = "SELECT COUNT(*) FROM clients WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id.value());
-        return count != null && count > 0;
+        return count > 0;
     }
 
     @Override
