@@ -54,7 +54,7 @@ public class RestaurantOwnerJdbcRepository implements IRestaurantOwnerRepository
                 sql,
                 restaurantOwner.getId().value(),
                 restaurantOwner.getCorporateName(),
-                restaurantOwner.getCnpj().value());
+                restaurantOwner.getCnpj() != null ? restaurantOwner.getCnpj().value() : null);
     }
 
     private RestaurantOwner mapRow(ResultSet rs) throws SQLException {
