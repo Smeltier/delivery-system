@@ -11,11 +11,9 @@ import br.com.delivery.application.usecases.order.FindClientOrdersUseCase;
 import br.com.delivery.domain.repositories.IAccountRepository;
 import br.com.delivery.domain.repositories.IClientRepository;
 import br.com.delivery.domain.repositories.IOrderRepository;
-import br.com.delivery.domain.repositories.IRestaurantOwnerRepository;
 import br.com.delivery.domain.repositories.IRestaurantRepository;
 import br.com.delivery.infrastructure.persistence.memory.InMemoryRestaurantRepository;
 import br.com.delivery.infrastructure.persistence.memory.InMemoryOrderRepository;
-import br.com.delivery.infrastructure.persistence.memory.InMemoryRestaurantOwnerRepository;
 
 @Configuration
 public class ApplicationConfig {
@@ -27,11 +25,6 @@ public class ApplicationConfig {
     @Bean
     public IOrderRepository orderRepository() {
         return new InMemoryOrderRepository();
-    }
-
-    @Bean
-    public IRestaurantOwnerRepository restaurantOwnerRepository() {
-        return new InMemoryRestaurantOwnerRepository();
     }
 
     @Bean
