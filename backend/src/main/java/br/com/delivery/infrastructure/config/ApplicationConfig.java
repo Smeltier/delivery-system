@@ -18,11 +18,6 @@ import br.com.delivery.infrastructure.persistence.memory.InMemoryOrderRepository
 @Configuration
 public class ApplicationConfig {
     @Bean
-    public IRestaurantRepository restaurantRepository() {
-        return new InMemoryRestaurantRepository();
-    }
-
-    @Bean
     public IOrderRepository orderRepository() {
         return new InMemoryOrderRepository();
     }
