@@ -16,6 +16,7 @@ import br.com.delivery.domain.account.Account;
 import br.com.delivery.domain.account.AccountRole;
 import br.com.delivery.domain.account.AccountId;
 import br.com.delivery.domain.shared.Email;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AccountJdbcRepository implements IAccountRepository {
@@ -41,6 +42,7 @@ public class AccountJdbcRepository implements IAccountRepository {
     }
 
     @Override
+    @Transactional
     public void save(Account account) {
         String upsertAccount = """
                 INSERT INTO accounts (id, name, email, active)
