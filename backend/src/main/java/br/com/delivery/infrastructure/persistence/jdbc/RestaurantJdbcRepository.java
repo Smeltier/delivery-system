@@ -225,8 +225,8 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
 
     @NonNull
     private Restaurant mapRowWithoutItems(@NonNull ResultSet rs) throws SQLException {
-        RestaurantId id = new RestaurantId(UUID.fromString(rs.getString("id")));
-        AccountId ownerId = new AccountId(UUID.fromString(rs.getString("owner_id")));
+        RestaurantId id = new RestaurantId("id", UUID.class));
+        AccountId ownerId = new AccountId("owner_id", UUID.class));
         String name = rs.getString("name");
 
         OpeningHours openingHours = new OpeningHours(
@@ -257,8 +257,8 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
 
     @NonNull
     private MenuItem mapMenuItem(@NonNull ResultSet rs) throws SQLException {
-        MenuItemId id = new MenuItemId(UUID.fromString(rs.getString("id")));
-        RestaurantId restaurantId = new RestaurantId(UUID.fromString(rs.getString("restaurant_id")));
+        MenuItemId id = new MenuItemId("id", UUID.class));
+        RestaurantId restaurantId = new RestaurantId("restaurant_id", UUID.class));
         String name = rs.getString("name");
         String description = rs.getString("description");
         MenuItemCategory category = MenuItemCategory.valueOf(rs.getString("category"));
