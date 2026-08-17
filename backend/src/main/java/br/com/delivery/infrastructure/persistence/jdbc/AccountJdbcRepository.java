@@ -9,14 +9,15 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.delivery.domain.repositories.IAccountRepository;
 import br.com.delivery.domain.account.Account;
 import br.com.delivery.domain.account.AccountRole;
 import br.com.delivery.domain.account.AccountId;
 import br.com.delivery.domain.shared.Email;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AccountJdbcRepository implements IAccountRepository {
@@ -27,7 +28,7 @@ public class AccountJdbcRepository implements IAccountRepository {
     }
 
     @Override
-    public Optional<Account> findById(AccountId id) {
+    public Optional<Account> findById(@NonNull AccountId id) {
         String sql = "SELECT id, name, email FROM accounts WHERE id = ?";
         List<Account> result = jdbcTemplate.query(sql, (rs, rowNum) -> mapRowWithoutRoles(rs), id.value());
 
@@ -43,7 +44,7 @@ public class AccountJdbcRepository implements IAccountRepository {
 
     @Override
     @Transactional
-    public void save(Account account) {
+    public void save(@NonNull Account account) {
         String upsertAccount = """
                 INSERT INTO accounts (id, name, email, active)
                 VALUES (?, ?, ?, ?)
@@ -60,23 +61,29 @@ public class AccountJdbcRepository implements IAccountRepository {
 
         jdbcTemplate.update("DELETE FROM accounts_roles WHERE account_id = ?", account.getId().value());
 
-        for (AccountRole role : account.getRoles()) {
-            jdbcTemplate.update(
+        if (!account.getRoles().isEmpty()) {
+            List<AccountRole> roles = account.getRoles().stream().toList();
+            jdbcTemplate.batchUpdate(
                     "INSERT INTO accounts_roles (account_id, role) VALUES (?, ?::account_role)",
-                    account.getId().value(),
-                    role.name());
+                    roles, roles.size(),
+                    (ps, role) -> {
+                        ps.setObject(1, account.getId().value());
+                        ps.setString(2, role.name());
+                    });
         }
     }
 
-    private Account mapRowWithoutRoles(ResultSet rs) throws SQLException {
-        AccountId id = new AccountId(UUID.fromString(rs.getString("id")));
+    @NonNull
+    private Account mapRowWithoutRoles(@NonNull ResultSet rs) throws SQLException {
+        AccountId id = new AccountId(rs.getObject("id", UUID.class));
         String name =  rs.getString("name");
         Email email = new Email(rs.getString("email"));
 
         return Account.restore(id, name, email, Set.of());
     }
 
-    private Set<AccountRole> findRoles(AccountId id) {
+    @NonNull
+    private Set<AccountRole> findRoles(@NonNull AccountId id) {
         String sql = "SELECT role FROM accounts_roles WHERE account_id = ?";
         List<String> roles = jdbcTemplate.queryForList(sql, String.class, id.value());
 
