@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -225,8 +227,8 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
 
     @NonNull
     private Restaurant mapRowWithoutItems(@NonNull ResultSet rs) throws SQLException {
-        RestaurantId id = new RestaurantId("id", UUID.class));
-        AccountId ownerId = new AccountId("owner_id", UUID.class));
+        RestaurantId id = new RestaurantId(rs.getObject("id", UUID.class));
+        AccountId ownerId = new AccountId(rs.getObject("owner_id", UUID.class));
         String name = rs.getString("name");
 
         OpeningHours openingHours = new OpeningHours(
@@ -257,8 +259,8 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
 
     @NonNull
     private MenuItem mapMenuItem(@NonNull ResultSet rs) throws SQLException {
-        MenuItemId id = new MenuItemId("id", UUID.class));
-        RestaurantId restaurantId = new RestaurantId("restaurant_id", UUID.class));
+        MenuItemId id = new MenuItemId(rs.getObject("id", UUID.class));
+        RestaurantId restaurantId = new RestaurantId(rs.getObject("restaurant_id", UUID.class));
         String name = rs.getString("name");
         String description = rs.getString("description");
         MenuItemCategory category = MenuItemCategory.valueOf(rs.getString("category"));
