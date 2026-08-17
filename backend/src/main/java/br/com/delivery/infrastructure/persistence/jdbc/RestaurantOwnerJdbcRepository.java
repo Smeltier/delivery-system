@@ -7,7 +7,9 @@ import java.util.UUID;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.delivery.domain.repositories.IRestaurantOwnerRepository;
 import br.com.delivery.domain.restaurantowner.RestaurantOwner;
@@ -23,7 +25,7 @@ public class RestaurantOwnerJdbcRepository implements IRestaurantOwnerRepository
     }
 
     @Override
-    public Optional<RestaurantOwner> findById(AccountId id) {
+    public Optional<RestaurantOwner> findById(@NonNull AccountId id) {
         String sql = "SELECT id, corporate_name, cnpj FROM restaurant_owners WHERE id = ?";
         List<RestaurantOwner> result = jdbcTemplate.query(sql, (rs, rowNum) -> mapRow(rs), id.value());
 
@@ -35,14 +37,15 @@ public class RestaurantOwnerJdbcRepository implements IRestaurantOwnerRepository
     }
 
     @Override
-    public boolean existsById(AccountId id) {
+    public boolean existsById(@NonNull AccountId id) {
         String sql = "SELECT COUNT(*) FROM restaurant_owners WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id.value());
-        return count > 0;
+        return count != null && count > 0;
     }
 
     @Override
-    public void save(RestaurantOwner restaurantOwner) {
+    @Transactional
+    public void save(@NonNull RestaurantOwner restaurantOwner) {
         String sql = """
                 INSERT INTO restaurant_owners (id, corporate_name, cnpj)
                 VALUES(?, ?, ?)
@@ -57,8 +60,9 @@ public class RestaurantOwnerJdbcRepository implements IRestaurantOwnerRepository
                 restaurantOwner.getCnpj() != null ? restaurantOwner.getCnpj().value() : null);
     }
 
-    private RestaurantOwner mapRow(ResultSet rs) throws SQLException {
-        AccountId id = new AccountId(UUID.fromString(rs.getString("id")));
+    @NonNull
+    private RestaurantOwner mapRow(@NonNull ResultSet rs) throws SQLException {
+        AccountId id = new AccountId(rs.getObject("id", UUID.class));
         String corporateName = rs.getString("corporate_name");
 
         String cnpjValue = rs.getString("cnpj");

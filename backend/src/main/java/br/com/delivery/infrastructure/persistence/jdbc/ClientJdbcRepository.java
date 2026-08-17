@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.delivery.domain.repositories.IClientRepository;
 import br.com.delivery.domain.account.AccountId;
@@ -25,7 +27,7 @@ public class ClientJdbcRepository implements IClientRepository {
     }
 
     @Override
-    public Optional<Client> findById(AccountId id) {
+    public Optional<Client> findById(@NonNull AccountId id) {
         String sql = """
                 SELECT c.id, c.cpf, c.address_id,
                 a.street, a.number, a.complement, a.city, a.country, a.zip_code
@@ -43,14 +45,15 @@ public class ClientJdbcRepository implements IClientRepository {
     }
 
     @Override
-    public boolean existsById(AccountId id) {
+    public boolean existsById(@NonNull AccountId id) {
         String sql = "SELECT COUNT(*) FROM clients WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id.value());
         return count > 0;
     }
 
     @Override
-    public void save(Client client) {
+    @Transactional
+    public void save(@NonNull Client client) {
         UUID addressId = null;
 
         if (client.getAddress() != null) {
@@ -81,8 +84,9 @@ public class ClientJdbcRepository implements IClientRepository {
         jdbcTemplate.update(sql, client.getId().value(), cpfValue, addressId);
     }
 
-    private Client mapRow(ResultSet rs) throws SQLException {
-        AccountId id = new AccountId(UUID.fromString(rs.getString("id")));
+    @NonNull
+    private Client mapRow(@NonNull ResultSet rs) throws SQLException {
+        AccountId id = new AccountId(rs.getObject("id", UUID.class));
         Client client = Client.restore(id);
 
         String cpfValue = rs.getString("cpf");
