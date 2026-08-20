@@ -124,8 +124,17 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
                     SET street = ?, number = ?, complement = ?, city = ?, country = ?, zip_code = ?
                     WHERE id = ?
                     """;
-            jdbcTemplate.update(updateSql, address.street(), address.number(), address.complement(),
-                    address.city(), address.country(), address.zipCode().toString(), existingAddressId);
+
+            jdbcTemplate.update(
+                    updateSql,
+                    address.street(),
+                    address.number(),
+                    address.complement(),
+                    address.city(),
+                    address.country(),
+                    address.zipCode().toString(),
+                    existingAddressId);
+
             return existingAddressId;
         }
 
@@ -217,7 +226,7 @@ public class RestaurantJdbcRepository implements IRestaurantRepository {
         return jdbcTemplate.query(sql, (rs, rowNum) -> mapMenuItem(rs), id.value());
     }
 
-    private String currencyCode(Currency currency) {
+    private String currencyCode(Currency currency)w {
         return currency == null ? null : currency.name();
     }
 
